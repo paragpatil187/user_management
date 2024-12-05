@@ -7,6 +7,7 @@ class Core
     const DB_PASS = "";
     const DB_HOST = "localhost";
     const DB_USER = "root";
+    
     // const BASE_URL = 'http://user--management.rf.gdapi/backend/api/';
     // const DB_NAME = "if0_37851430_user_crud";
     // const DB_PASS = "aPmImU9LTj";
