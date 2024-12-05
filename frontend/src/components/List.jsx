@@ -6,6 +6,7 @@ const List = () => {
     const [userData, setUserData] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [modalType, setModalType] = useState("");
+    const BASE_URL="http://localhost/user_management/backend/api/";
 
     // Fetch all users
     useEffect(() => {
@@ -14,7 +15,7 @@ const List = () => {
 
     const fetchUsers = () => {
         axios
-            .get("http://localhost/user_management/backend/api/get_all_user.php")
+            .get(`${BASE_URL}get_all_user.php`)
             .then((response) => {
                 setUserData(response.data.users);
             })
@@ -44,7 +45,7 @@ const List = () => {
         };
 
         axios
-            .post("http://localhost/user_management/backend/api/create_user.php", newUser)
+            .post(`${BASE_URL}create_user.php`, newUser)
             .then(() => {
                 fetchUsers();
                 closeModal();
@@ -66,7 +67,7 @@ const List = () => {
         };
 
         axios
-            .post("http://localhost/user_management/backend/api/update_user.php", updatedUser)
+            .post(`${BASE_URL}update_user.php`, updatedUser)
             .then(() => {
                 fetchUsers();
                 closeModal();
@@ -79,7 +80,7 @@ const List = () => {
     // Delete a user
     const handleDelete = () => {
         axios
-            .post("http://localhost/user_management/backend/api/delete_user.php", { id: selectedUser.id })
+            .post(`${BASE_URL}delete_user.php`, { id: selectedUser.id })
             .then(() => {
                 fetchUsers();
                 closeModal();
@@ -169,61 +170,7 @@ const List = () => {
                         >
                             ✕
                         </button>
-                        {modalType === "view" && (
-                            <div>
-                                <h2 className="text-lg font-bold mb-4">View User</h2>
-                                {/* <p><strong>ID:</strong> {selectedUser.id}</p> */}
-                                <p><strong>Name:</strong> {selectedUser.name}</p>
-                                <p><strong>Email:</strong> {selectedUser.email}</p>
-                                <p><strong>Date of Birth:</strong> {selectedUser.dob}</p>
-                                <p><strong>Password:</strong> {selectedUser.password}</p>
-                            </div>
-                        )}
-                        {modalType === "edit" && (
-                            <form onSubmit={handleEdit}>
-                                <h2 className="text-lg font-bold mb-4">Edit User</h2>
-                                <label className="block mb-2">
-                                    Name:
-                                    <input
-                                        name="name"
-                                        defaultValue={selectedUser.name}
-                                        className="block w-full border rounded px-2 py-1"
-                                    />
-                                </label>
-                                <label className="block mb-2">
-                                    Email:
-                                    <input
-                                        name="email"
-                                        defaultValue={selectedUser.email}
-                                        className="block w-full border rounded px-2 py-1"
-                                    />
-                                </label>
-                                <label className="block mb-2">
-                                    Date of Birth:
-                                    <input
-                                        name="dob"
-                                        type="date"
-                                        defaultValue={selectedUser.dob}
-                                        className="block w-full border rounded px-2 py-1"
-                                    />
-                                </label>
-                                <label className="block mb-2">
-                                    Password:
-                                    <input
-                                        name="password"
-                                        type="password"
-                                        defaultValue={selectedUser.password}
-                                        className="block w-full border rounded px-2 py-1"
-                                    />
-                                </label>
-                                <button
-                                    type="submit"
-                                    className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                >
-                                    Save Changes
-                                </button>
-                            </form>
-                        )}
+                       
                         {modalType === "delete" && (
                             <div>
                                 <h2 className="text-lg font-bold mb-4">Delete User</h2>
@@ -242,53 +189,111 @@ const List = () => {
                                 </button>
                             </div>
                         )}
-                        {modalType === "create" && (
-                            <form onSubmit={handleCreate}>
-                                <h2 className="text-lg font-bold mb-4">Create User</h2>
-                                <label className="block mb-2">
-                                    Name:
-                                    <input
-                                        name="name"
-                                        type="text"
-                                        className="block w-full border rounded px-2 py-1"
-                                        required
-                                    />
-                                </label>
-                                <label className="block mb-2">
-                                    Email:
-                                    <input
-                                        name="email"
-                                        type="email"
-                                        className="block w-full border rounded px-2 py-1"
-                                        required
-                                    />
-                                </label>
-                                <label className="block mb-2">
-                                    Date of Birth:
-                                    <input
-                                        name="dob"
-                                        type="date"
-                                        className="block w-full border rounded px-2 py-1"
-                                        required
-                                    />
-                                </label>
-                                <label className="block mb-2">
-                                    Password:
-                                    <input
-                                        name="password"
-                                        type="password"
-                                        className="block w-full border rounded px-2 py-1"
-                                        required
-                                    />
-                                </label>
-                                <button
-                                    type="submit"
-                                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                >
-                                    Create
-                                </button>
-                            </form>
-                        )}
+                        {modalType === "create" || modalType === "edit" ? (
+    <form onSubmit={modalType === "create" ? handleCreate : handleEdit}>
+        <h2 className="text-2xl font-semibold mb-6">
+            {modalType === "create" ? "Create User" : "Edit User"}
+        </h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    Name
+                </label>
+                <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    defaultValue={modalType === "edit" ? selectedUser?.name : ""}
+                    className="mt-1 block w-full rounded-sm border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    required
+                />
+            </div>
+            <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Email
+                </label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    defaultValue={modalType === "edit" ? selectedUser?.email : ""}
+                    className="mt-1 block w-full rounded-sm border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    required
+                />
+            </div>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
+            <div>
+                <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
+                    Date of Birth
+                </label>
+                <input
+                    id="dob"
+                    name="dob"
+                    type="date"
+                    defaultValue={modalType === "edit" ? selectedUser?.dob : ""}
+                    className="mt-1 block w-full rounded-sm border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    required
+                />
+            </div>
+            <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    Password
+                </label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    defaultValue={modalType === "edit" ? selectedUser?.password : ""}
+                    className="mt-1 block w-full rounded-sm border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    required
+                />
+            </div>
+        </div>
+        <div className="mt-6 flex justify-end">
+            <button
+                type="button"
+                onClick={closeModal}
+                className="mr-3 inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+                Cancel
+            </button>
+            <button
+                type="submit"
+                className="inline-flex justify-center rounded-md border border-light bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+                {modalType === "create" ? "Create" : "Save Changes"}
+            </button>
+        </div>
+    </form>
+) : modalType === "view" ? (
+    <div>
+        <h2 className="text-2xl font-semibold mb-6">View User</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+                <strong>Name:</strong> {selectedUser?.name}
+            </div>
+            <div>
+                <strong>Email:</strong> {selectedUser?.email}
+            </div>
+            <div>
+                <strong>Date of Birth:</strong> {selectedUser?.dob}
+            </div>
+            <div>
+                <strong>Password:</strong> {selectedUser?.password}
+            </div>
+        </div>
+        <div className="mt-6 flex justify-end">
+            <button
+                type="button"
+                onClick={closeModal}
+                className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+                Close
+            </button>
+        </div>
+    </div>
+) : null}
                     </div>
                 </div>
             )}
