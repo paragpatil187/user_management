@@ -6,7 +6,10 @@ const List = () => {
   const [userData, setUserData] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState("");
-  const BASE_URL = "http://localhost/user_management/backend/api/";
+  //  const BASE_URL = "http://localhost/user_management/backend/api/";
+   const BASE_URL = "https://user--management.rf.gd/backend/api/";
+
+
 
   // Fetch all users
   useEffect(() => {
